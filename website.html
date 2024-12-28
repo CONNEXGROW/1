@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhandara Info - Punya Pantry</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #fff;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background-color: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #FF8C00;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .donate-btn {
+      background: #FF8C00;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-container {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .info-heading {
+      color: #FF8C00;
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    #contentContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .info-block {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #FF8C00;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .info-value {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .location-value {
+      color: #FF8C00;
+    }
+
+    .stats-section {
+      background: #FF8C00;
+      padding: 4rem 2rem;
+      color: white;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .stats-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .stat-item h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-item p {
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      background: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .info-container {
+        margin: 2rem 1rem;
+        padding: 1rem;
+      }
+
+      .info-block {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="#" class="logo">Punya Pantry</a>
+      <div class="nav-links">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Our Mission</a>
+        <a href="#" class="nav-link">Get Involved</a>
+        <a href="#" class="nav-link">Stories</a>
+        <a href="#" class="donate-btn">
+          Donate Now 🧡
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="info-container">
+    <h1 class="info-heading">Bhandara Information</h1>
+    <div id="contentContainer">
+      <!-- Content will be dynamically inserted here by website.js -->
+    </div>
+  </div>
+
+  <section class="stats-section" id="stats">
+    <div class="stats-container">
+      <div class="stat-item">
+        <h2 id="meals-served">0+</h2>
+        <p>Meals Served</p>
+      </div>
+      <div class="stat-item">
+        <h2 id="volunteers">0+</h2>
+        <p>Dedicated Volunteers</p>
+      </div>
+      <div class="stat-item">
+        <h2 id="communities">0+</h2>
+        <p>Communities Impacted</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2023 Punya Pantry - Sharing Love Through Food. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api/data';
+
+    async function loadWebsiteContent() {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch data');
+
+        const data = await response.json();
+        const contentContainer = document.getElementById('contentContainer');
+        contentContainer.innerHTML = '';
+
+        data.forEach((entry) => {
+          const block = document.createElement('div');
+          block.className = 'info-block';
+          
+          block.innerHTML = `
+            <div class="info-section">
+              <div class="info-label">Name</div>
+              <div class="info-value">${entry.name}</div>
+            </div>
+            <div class="info-section">
+              <div class="info-label">Date</div>
+              <div class="info-value">${entry.date}</div>
+            </div>
+            <div class="info-section">
+              <div class="info-label">Time</div>
+              <div class="info-value">${entry.time}</div>
+            </div>
+            <div class="info-section">
+              <div class="info-label">Location</div>
+              <div class="info-value location-value">${entry.location}</div>
+            </div>
+          `;
+          
+          contentContainer.appendChild(block);
+        });
+      } catch (error) {
+        console.error('Error loading website content:', error);
+        document.getElementById('contentContainer').textContent = 'Error loading content.';
+      }
+    }
+
+    function animateValue(id, start, end, duration) {
+      if (duration <= 0) return;
+
+      let obj = document.getElementById(id);
+      let range = end - start;
+      let minTimer = 50;
+      let stepTime = Math.max(Math.abs(Math.floor(duration / range)), minTimer);
+      let startTime = new Date().getTime();
+      let endTime = startTime + duration;
+      let timer;
+
+      function run() {
+        let now = new Date().getTime();
+        let remaining = Math.max((endTime - now) / duration, 0);
+        let value = Math.round(end - (remaining * range));
+        obj.innerHTML = value + "+";
+        if (value == end) {
+          clearInterval(timer);
+        }
+      }
+
+      timer = setInterval(run, stepTime);
+      run();
+    }
+
+    const statsSection = document.querySelector('.stats-section');
+    let animated = false;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !animated) {
+          statsSection.classList.add('visible');
+          animateValue("meals-served", 0, 10000, 3000);
+          animateValue("volunteers", 0, 50000, 4000);
+          animateValue("communities", 0, 50, 2000);
+          animated = true;
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    observer.observe(statsSection);
+
+    loadWebsiteContent();
+  </script>
+</body>
+</html>
